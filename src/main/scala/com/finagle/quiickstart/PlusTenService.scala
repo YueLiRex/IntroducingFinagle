@@ -9,6 +9,7 @@ class PlusTenService extends Service[http.Request, http.Response] {
 
   override def apply(request: http.Request): Future[http.Response] = {
     Future {
+//      Thread.sleep(3000)
       val input = request.getIntParam("num")
       val output = input + 10
       val response = http.Response(request.version, http.Status.Ok)
