@@ -4,11 +4,8 @@ import com.twitter.finagle.Service
 import com.twitter.util.Future
 
 class IntegerService extends Service[Int, Int]{
+  var count = 0
   override def apply(request: Int): Future[Int] = {
-    if (request > 10) {
-      Future.value(request * request)
-    } else {
-      Future.value(request - 1)
-    }
+    Future.value(count + request)
   }
 }

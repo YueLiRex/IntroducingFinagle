@@ -12,28 +12,25 @@ object IntegerServerAndClient extends Factories with CodecConversions {
 
 
   /**
-    * Creates a Finagle server from a function given that we have scodec codecs
+    * Creates a Finagle server from a service that we have scodec codecs
     * for both the input and output types.
     */
-  def server[I, O](port: Int)(f: I => Future[O])(implicit ic: Codec[I], oc: Codec[O]) =
+  def server[I, O](port: Int)(service: Service[I, O])(implicit ic: Codec[I], oc: Codec[O]) =
     ServerBuilder()
       .name("server")
       .codec(codecFactory[I, O])
       .bindTo(new InetSocketAddress(port))
-      .build(new Service[I, O] {
-        def apply(i: I) = f(i)
-      })
+      .build(service)
 
   /**
     * Creates a Finagle client given input and output types with scodec codecs.
     */
-  def client[I, O](host: String, timeout: Duration = 1.second)
+  def client[I, O](host: String, timeout: Duration = 3.second)
                   (implicit ic: Codec[I], oc: Codec[O]) =
     ClientBuilder()
       .name("client")
       .codec(codecFactory[I, O])
       .hosts(host)
-      .hostConnectionLimit(1)
       .timeout(timeout)
       .build()
 }
